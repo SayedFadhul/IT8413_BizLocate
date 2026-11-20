@@ -1,0 +1,29 @@
+# ---- secrets: never commit ----
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+secrets.toml
+
+# ---- documents: website terms restrict reproduction; scripts/setup_sources.py downloads them ----
+documents/
+
+# ---- run output ----
+logs/
+*.log
+
+# ---- Python / tools ----
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# ---- OS / Office ----
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*

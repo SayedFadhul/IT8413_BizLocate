@@ -1,0 +1,66 @@
+{
+  "D1_LD27-2015_Commercial_Register.pdf": {
+    "code": "D1",
+    "url": "https://www.moic.gov.bh/sites/default/files/2021-10/Legislative%20Decree%20no.%20%2827%29%20of%202015%20Concerning%20the%20Commercial%20Register.pdf",
+    "sha256": "2094c60df7a468bdeb17d511ec400966d2b71c3d882b8b1894568f73ed201285",
+    "bytes": 41370,
+    "checked": "2026-11-18"
+  },
+  "D1a_LD52-2018_Amendment_Commercial_Register.pdf": {
+    "code": "D1a",
+    "url": "https://www.moic.gov.bh/sites/default/files/2021-10/Legislative%20Decree%20No.%20%2852%29%20of%202018%20Concerning%20the%20Amendment%20to%20Certain%20Provisions%20of%20Legislative%20Decree%20No.%20%2827%29%20of%202015%20Concerning%20the%20Commercial%20Register.pdf",
+    "sha256": "6c28d7d4946f15f38852073921a97e52dccfe45bf3863cd6cbc8febac729219d",
+    "bytes": 779012,
+    "checked": "2026-11-18",
+    "scanned": true,
+    "ocr_file": "D1a_LD52-2018_Amendment_Commercial_Register (OCR).txt",
+    "ocr_sha256": "b44f488a4c1e84a55368b9f907fa6f13fe29b659b90f08ded363e98df4dd34da",
+    "ocr_method": "Tesseract OCR made by G3 on 18/11/2026 (proposal Sources/documents_text)"
+  },
+  "D2_Order126-2016_CR_Implementing_Regulation.pdf": {
+    "code": "D2",
+    "url": "https://www.moic.gov.bh/sites/default/files/2021-10/Order%20no.%20%28126%29%20of%202016%20Concerning%20the%20Promulgation%20of%20the%20Implementing%20Regulation%20of%20Legislative%20Decree%20no.%20%2827%29%20of%202015%20concerning%20the%20Commercial%20Register.pdf",
+    "sha256": "f7107a88f4117fdf983542cfc787f001f4012e79063936e409782a500892111d",
+    "bytes": 53531,
+    "checked": "2026-11-18"
+  },
+  "D3_MOIC_Procedures_Guide_Establishments_Companies.pdf": {
+    "code": "D3",
+    "url": "https://www.moic.gov.bh/sites/default/files/2024-03/Procedures%20Guide%20for%20Establishments%20and%20Commercial%20Companies.pdf",
+    "sha256": "850c8a590b8e6743bb3c386bcfc5592e7fd1a9ab582b1b5f00218847c03c9312",
+    "bytes": 380425,
+    "checked": "2026-11-18"
+  },
+  "D3a_LD28-2020_Amendment_Companies_Law.pdf": {
+    "code": "D3a",
+    "url": "https://www.moic.gov.bh/sites/default/files/2021-10/Decree%20Law%20No.%20%2828%29%20for%20year%202020%20an%20amending%20some%20provisions%20of%20the%20Commerical%20Companies%20Law%20promulgated%20by%20Decree%20Law%20No.%20%2821%29%20of%202001.pdf",
+    "sha256": "b711a636d9c3ee8a180df23bb9ab8474b210f2252e9ba46f5481da6834b0f4ef",
+    "bytes": 696340,
+    "checked": "2026-11-18",
+    "scanned": true,
+    "ocr_file": "D3a_LD28-2020_Amendment_Companies_Law (OCR).txt",
+    "ocr_sha256": "25656a5d60a84599d503ec93a25d895587ac71937f700d708ac046c9b1bd8f41",
+    "ocr_method": "Tesseract OCR made by G3 on 18/11/2026 (proposal Sources/documents_text)"
+  },
+  "D4_MOH_Food_Safety_Guideline_FCS3_v4.pdf": {
+    "code": "D4",
+    "url": "https://www.moh.gov.bh/Content/Upload/File/638242460024477544-Food-Safety-Guidelines_EN.pdf",
+    "sha256": "9dafedcd1ec5c9b2d38cb84989a02443041adaf8da05d6f18bf0d2126441cd6c",
+    "bytes": 381613,
+    "checked": "2026-11-18"
+  },
+  "D5_MOIC_Virtual_Store_Sijili_Guide.pdf": {
+    "code": "D5",
+    "url": "https://www.moic.gov.bh/sites/default/files/2026-01/Virtual%20CR%20Sijili%20Guide.pdf",
+    "sha256": "e60da46d7caf2ecd75ffa1456bc3bb88b8adcb015d2f35ae83b6a7dc6b13a74f",
+    "bytes": 358600,
+    "checked": "2026-11-18"
+  },
+  "D6_MOIC_Food_Truck_Licensing.pdf": {
+    "code": "D6",
+    "url": "https://www.moic.gov.bh/sites/default/files/2024-02/Food%20Truck%20licensing.pdf",
+    "sha256": "4e180f0af3a6efe3a32004138a68e4fddf6ae927f7ee4aa0d51aed4222c1204f",
+    "bytes": 130859,
+    "checked": "2026-11-18"
+  }
+}
