@@ -40,3 +40,5 @@ def test_document_manifest_is_complete():
         assert re.fullmatch(r"[0-9a-f]{64}", info["sha256"])
         if info.get("scanned"):                                 # the two scans also have checked OCR text
             assert re.fullmatch(r"[0-9a-f]{64}", info["ocr_sha256"]) and info["ocr_file"].endswith(".txt")
+        else:                                                   # the others: checked text for the online copy
+            assert re.fullmatch(r"[0-9a-f]{64}", info["text_sha256"])

@@ -4,6 +4,8 @@ Method (as in Lab 3.3, "Splitting the Laws into Chunks"):
   1. Read each document page by page, so every passage keeps its page numbers for citations.
      Six PDFs have a text layer (read with pypdf). D1a and D3a are scans: their text is the
      group's checked OCR text in documents/ocr/ (made by scripts/setup_sources.py).
+     The online copy of the app has no PDFs: it reads the same page text from documents/text/,
+     written from its Secrets and checked against the SHA-256 in the manifest (app/cloud_setup.py).
   2. Split each page into paragraphs: a new paragraph starts at a blank line, a heading
      (Article (10), Section 5, 5.4.5 ...) or a list item.
   3. Group whole paragraphs into passages of at most `chunk_words` words (200 in v1, as in the lab),
@@ -20,7 +22,7 @@ import json
 import re
 from dataclasses import asdict, dataclass, field
 
-from app.config import DOCS_DIR, DOCS_MANIFEST, OCR_DIR
+from app.config import DOCS_DIR, DOCS_MANIFEST, OCR_DIR, TEXT_DIR
 
 # Short names and currency notes shown with every passage, so the model (and the reader)
 # knows which document a rule comes from and whether a newer text replaces it.
@@ -108,10 +110,23 @@ def ocr_file_for(name: str) -> str:
     return name.replace(".pdf", " (OCR).txt")
 
 
+def text_file_for(name: str) -> str:
+    return name.replace(".pdf", " (text).json")
+
+
+def pdf_page_texts(path) -> list[str]:
+    """The text layer of a PDF, one string per page (pypdf)."""
+    from pypdf import PdfReader
+    return [p.extract_text() or "" for p in PdfReader(str(path)).pages]
+
+
+def text_copy_bytes(page_texts: list[str]) -> bytes:
+    """A PDF's page texts as stored for the online copy: a JSON list. Its SHA-256 is in the manifest."""
+    return json.dumps(page_texts, ensure_ascii=False).encode("utf-8")
+
+
 def load_pages() -> list[Page]:
     """Every page of every document, in manifest order. Raises FileNotFoundError if a file is missing."""
-    from pypdf import PdfReader
-
     pages: list[Page] = []
     for name, info in manifest().items():
         doc = info["code"]
@@ -124,9 +139,12 @@ def load_pages() -> list[Page]:
             for num, text in zip(parts[1::2], parts[2::2]):
                 pages.append(Page(doc, name, int(num), text))
         else:
-            reader = PdfReader(str(DOCS_DIR / name))
-            for i, p in enumerate(reader.pages, start=1):
-                pages.append(Page(doc, name, i, p.extract_text() or ""))
+            pdf, copy = DOCS_DIR / name, TEXT_DIR / text_file_for(name)
+            if pdf.exists() or not copy.exists():
+                texts = pdf_page_texts(pdf)                 # raises FileNotFoundError if both are missing
+            else:                                           # online copy: the checked text of the same PDF
+                texts = json.loads(copy.read_text(encoding="utf-8"))
+            pages.extend(Page(doc, name, i, t) for i, t in enumerate(texts, start=1))
     return pages
 
 

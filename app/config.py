@@ -22,6 +22,7 @@ SOURCES_CSV = ROOT / "data" / "sources.csv"
 DOCS_MANIFEST = ROOT / "data" / "documents_manifest.json"
 DOCS_DIR = ROOT / "documents"          # filled by scripts/setup_sources.py, not committed
 OCR_DIR = DOCS_DIR / "ocr"             # OCR text of the two scanned PDFs (D1a, D3a), not committed
+TEXT_DIR = DOCS_DIR / "text"           # online copy only: checked text of the other six PDFs, not committed
 INDEX_DIR = DOCS_DIR / "index"         # chunk embeddings built by scripts/build_index.py, not committed
 LOG_DIR = ROOT / "logs"                # query logs (F10), not committed
 RESULTS_DIR = ROOT / "results"         # evaluation run outputs (answers, tokens, latency)

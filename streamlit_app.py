@@ -81,10 +81,16 @@ with st.sidebar:
 
 
 @st.cache_resource(show_spinner=False)
-def prepare_online_copy(_settings, _key: str, embedding_model: str, chunk_words: int) -> str:
-    """Online version only: download the documents and build the search index once per server start."""
+def prepare_online_copy(_settings, _key: str, embedding_model: str, chunk_words: int) -> str | None:
+    """Online version only: prepare the documents and build the search index once per server start.
+    Returns None when ready, or what went wrong. A failure is kept too, so it is not retried on
+    every click (rebooting the app tries again)."""
     from app import cloud_setup
-    return cloud_setup.prepare(_settings, _key, progress=lambda msg: None)
+    try:
+        cloud_setup.prepare(_settings, _key, progress=lambda msg: None)
+        return None
+    except Exception as err:
+        return str(err)
 
 
 # Online version (Streamlit Community Cloud): the documents and index are not in GitHub, so they are
@@ -93,12 +99,14 @@ if key and importlib.util.find_spec("app.cloud_setup") and importlib.util.find_s
     from app import cloud_setup
 
     if cloud_setup.needed(settings):
-        try:
-            with st.spinner("First start of the online version: downloading the documents and building the "
-                            "search index (one to two minutes)..."):
-                prepare_online_copy(settings, key, settings.embedding_model, settings.chunk_words)
-        except Exception as err:
-            st.error(f"The documents could not be prepared, so document questions will not work: {err}")
+        with st.spinner("First start of the online version: preparing the documents and building the "
+                        "search index (about a minute)..."):
+            problem = prepare_online_copy(settings, key, settings.embedding_model, settings.chunk_words)
+        if problem:
+            st.error("Document questions are not available in this online copy, because its documents could "
+                     "not be prepared. The dashboard and the data questions still work.")
+            with st.expander("What went wrong"):
+                st.code(problem, language=None)
 
 options = selection = None
 if ds is not None and has("dashboard"):
