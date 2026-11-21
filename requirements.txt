@@ -1,11 +1,12 @@
-# Tested with Python 3.12 (works with 3.10+)
-streamlit>=1.50          # the web app
-altair>=5                # dashboard charts (installed with Streamlit; listed because we import it)
-pandas>=2.2              # data preparation and every computed figure
-numpy>=1.26              # cosine similarity for retrieval
-google-genai>=1.40       # Gemini API: generation, function calling, embeddings
-python-dotenv>=1.0       # reads GEMINI_API_KEY from the local .env file
-pypdf>=4.0               # reads the text of the document PDFs
-matplotlib>=3.8          # charts inside the downloadable report
-openpyxl>=3.1            # reads the test-set spreadsheet in evaluation runs
-pytest>=8.0              # tests
+# Exact versions the app was built and evaluated with (Python 3.12), so every install and every
+# deployment gets the same libraries and results can be reproduced.
+streamlit==1.67.0        # the web app
+altair==6.3.0            # dashboard charts
+pandas==3.1.1            # data preparation and every computed figure
+numpy==2.5.5             # cosine similarity for retrieval
+google-genai==3.6.1      # Gemini API: generation, function calling, embeddings
+python-dotenv==1.2.4     # reads GEMINI_API_KEY from the local .env file
+pypdf==7.1.1             # reads the text of the document PDFs
+matplotlib==3.11.2       # charts inside the downloadable report
+openpyxl==3.1.5          # reads the test-set spreadsheet in evaluation runs
+pytest==9.2.0            # tests

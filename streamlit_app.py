@@ -79,6 +79,27 @@ with st.sidebar:
     st.caption("API key: " + ("found ✅" if key else "missing ❌ (README, step 4)"))
     st.divider()
 
+
+@st.cache_resource(show_spinner=False)
+def prepare_online_copy(_settings, _key: str, embedding_model: str, chunk_words: int) -> str:
+    """Online version only: download the documents and build the search index once per server start."""
+    from app import cloud_setup
+    return cloud_setup.prepare(_settings, _key, progress=lambda msg: None)
+
+
+# Online version (Streamlit Community Cloud): the documents and index are not in GitHub, so they are
+# prepared on the first start from the app's private Secrets (README, "Online version").
+if key and importlib.util.find_spec("app.cloud_setup") and importlib.util.find_spec("app.retrieval"):
+    from app import cloud_setup
+
+    if cloud_setup.needed(settings):
+        try:
+            with st.spinner("First start of the online version: downloading the documents and building the "
+                            "search index (one to two minutes)..."):
+                prepare_online_copy(settings, key, settings.embedding_model, settings.chunk_words)
+        except Exception as err:
+            st.error(f"The documents could not be prepared, so document questions will not work: {err}")
+
 options = selection = None
 if ds is not None and has("dashboard"):
     from app import ui_dashboard

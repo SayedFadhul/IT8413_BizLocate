@@ -58,6 +58,16 @@ Each member commits their own work from their own GitHub account.
 
 On macOS or Linux use `python3`, `source .venv/bin/activate`, and forward slashes.
 
+## Online version (Streamlit Community Cloud)
+
+The app can run online from this repository, as in Lab 4.1; every push to `main` updates it automatically.
+
+1. After the setup above, run `python scripts/make_cloud_secrets.py`. It writes `documents/cloud_secrets.toml` (not in Git): the checked OCR text of the two scanned documents, compressed, and a place for the API key.
+2. On share.streamlit.io choose **Create app**, this repository, branch `main`, main file `streamlit_app.py`; under **Advanced settings** choose Python 3.12 and paste that file into **Secrets**, with your own key in place of `PASTE-YOUR-KEY-HERE`.
+3. On its first start the online app downloads the 8 documents from their official pages (with the same SHA-256 checks), writes the OCR text from its Secrets and builds the search index (about 9 requests), so the documents are never stored in the repository.
+
+Questions asked online use the key in the app's Secrets. The online query log is reset whenever the app restarts, so evaluation runs are done on a computer.
+
 ## Using the app
 
 | Tab | What it does | Feature |
@@ -109,6 +119,7 @@ IT8413_BizLocate/
 │   ├── report.py              F9: the HTML report
 │   ├── query_log.py           F10: the structured query log
 │   ├── evaluation.py          control / baseline / v1 / v2 runs, held-out protection
+│   ├── cloud_setup.py         online version: prepares the documents and index on the first start
 │   └── ui_*.py                the screen of each tab
 ├── data/
 │   ├── raw/                   the six data.gov.bh exports, unchanged
@@ -120,6 +131,7 @@ IT8413_BizLocate/
 ├── scripts/
 │   ├── setup_sources.py       downloads the documents, checks them, adds the OCR text
 │   ├── build_index.py         builds the document search index
+│   ├── make_cloud_secrets.py  makes the Secrets text for the online version (not in Git)
 │   └── run_eval.py            runs control / baseline / v1 / v2 on the development questions
 ├── tests/                     pytest tests (no API key needed; no test-set question is used)
 ├── ATTRIBUTION.md             data licence statement and attribution
