@@ -1,0 +1,3 @@
+﻿#,Set,Type,Question,Response (paste),Input tokens,Output tokens,Latency (s),Run date,Notes,Embedding tokens,Generation calls,Wait (s),Cost ($),Citations,Error
+10,Development,COM,"How many supermarkets and hypermarkets are there in the Southern Governorate, and what share of Bahrain's total is that?","There are 67 supermarkets and hypermarkets in the Southern Governorate, which represents 17.1% of the total in Bahrain [T1].",13253,61,3.88,20/11/2026,,32,2,0.0,0.003402,T1,
+11,Development,COM,And how many residents per store is that?,"There are 4,810 residents per store in the Southern Governorate [T2].",13618,61,6.17,20/11/2026,follow-up of Q10,41,2,0.0,0.003492,T2,

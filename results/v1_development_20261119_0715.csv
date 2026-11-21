@@ -1,0 +1,58 @@
+﻿#,Set,Type,Question,Response (paste),Input tokens,Output tokens,Latency (s),Run date,Notes,Embedding tokens,Generation calls,Wait (s),Cost ($),Citations,Error
+1,Development,DOC,"After a commercial registration is issued, how long does the owner have to obtain the approvals and licences needed to start the activity, and what happens if the period ends without them?","After a commercial registration is issued, the registration owner has one year to obtain the required approvals and licenses from the competent bodies [P41, P46]. The owner is prohibited from practicing the activity until these approvals and licenses are obtained and the certificate of registration is issued [P41].
+
+If the one-year period expires without obtaining the necessary approvals and licenses, the registration will be omitted [P8, P46]. The concerned directorate will carry out this omission of its own accord and notify the registration owner of the decision, which will also be published on the Ministry’s website [P46]. Acceptance of an excuse by the directorate does not exempt the owner from paying annual renewal fees or other due financial amounts [P46].",5982,155,1.95,19/11/2026,,42,1,0.0,0.001724,"P41, P46, P8",
+3,Development,DOC,"How long does the Registration Directorate have to decide on a registration application, and what does it mean if it does not reply in that time?","The Concerned Directorate must decide on a registration application within thirty days of the application being filed [P39]. If the Directorate does not decide upon the application within these thirty days, it is considered an implied rejection [P39].",6039,47,1.56,19/11/2026,,35,1,0.0,0.001577,P39,
+5,Development,DOC,"At what temperatures must a food premises keep cooked food waiting to be served, chilled food on display and frozen food?","For cooked food waiting to be served, you must keep it at a temperature of at least 63 °C [P131]. Chilled food on display should be kept between 4-7°C [P132]. Stored frozen materials must be kept at temperatures of at least -18°C [P132].",5974,73,1.55,19/11/2026,,30,1,0.0,0.0016,"P131, P132",
+7,Development,DOC,"Apart from MOIC, which government bodies does an applicant deal with to license a food truck, and for what?","To license a food truck, an applicant must deal with the following government bodies:
+
+*   **Ministry of Health (MOH):** Responsible for approving the interior design requirements of the truck or trailer [P160]. They also determine the payable fees for registration and licensing, and food establishments must obtain their approvals before operating or displaying products [P122].
+*   **General Directorate of Traffic Services:** Responsible for the registration of the truck or trailer and for issuing the required license [P161, P160].
+*   **Municipality:** Responsible for the reservation of sales sites [P160].
+*   **General Directorate of Civil Defence:** Responsible for approving the interior design requirements of the truck or trailer [P160].",5951,160,1.67,19/11/2026,,30,1,0.0,0.001725,"P160, P122, P161",
+9,Development,COM,"Which governorate has the most residents per pharmacy, and which has the fewest (mid-2025 population)?","The Northern Governorate has the most residents per pharmacy, while the Muharraq Governorate has the fewest [T2].
+
+Based on mid-2025 population figures and current pharmacy registration data, the distribution is as follows:
+
+*   **Northern Governorate:** 16,580 residents per pharmacy [T2].
+*   **Southern Governorate:** 9,479 residents per pharmacy [T2].
+*   **Capital Governorate:** 7,469 residents per pharmacy [T2].
+*   **Muharraq Governorate:** 5,504 residents per pharmacy [T2].
+
+Note that business counts are based on registrations listed as of 28/04/2026, and some listed businesses may have closed since that time [T2].",18217,240,3.58,19/11/2026,,31,3,0.0,0.004911,T2,
+10,Development,COM,"How many supermarkets and hypermarkets are there in the Southern Governorate, and what share of Bahrain's total is that?","There are 67 supermarkets and hypermarkets in the Southern Governorate, which represents 17.1% of the total in Bahrain [T1].",13009,61,2.74,19/11/2026,,32,2,0.0,0.003341,T1,
+11,Development,COM,And how many residents per store is that?,"There are 4,810 residents per supermarket and hypermarket in the Southern Governorate [T2].",13489,56,3.03,19/11/2026,follow-up of Q10,41,2,0.0,0.003452,T2,
+14,Development,COM,"How many coffee shops are listed in Muharraq, and what does a new coffee shop need from the Ministry of Health before it can open?","There are 145 coffee shops listed in the Muharraq governorate [T1].
+
+Before a new food establishment, such as a coffee shop, can open, it must comply with several requirements from the Ministry of Health's Food Control Section:
+
+*   **Licensing and Approval:** The owner must obtain all necessary licenses or approvals from the Department of Public Health before operating or displaying products [P122]. Engaging in food activities without this licensing is a violation of the Public Health Law and is subject to penalties [P122].
+*   **Plans and Sketches:** The establishment must have approved sketches and plans. No changes can be made to these, nor can any new production lines or devices be added, without formal approval from the Food Control Section [P122].
+*   **Validity and Display:** The license is valid for one year from the date of issuance and must be displayed in an apparent location within the establishment [P122].
+*   **Fees:** The Ministry of Health determines the fees payable for the registration and licensing requirements [P122].
+
+Note that the Food Control Section may suspend a license at any time if approved food safety legislations are violated [P122].",12755,286,3.12,19/11/2026,,37,2,0.0,0.003614,"T1, P122",
+16,Development,COM,"Someone wants to run a food truck in the Southern Governorate. How many fast-food restaurants already operate there, and who may hold a food-truck licence?","There are 51 fast-food restaurants listed in the Southern Governorate [T1].
+
+To hold a food-truck license, the applicant must meet the following requirements:
+*   The applicant must be a Bahraini national [P160].
+*   The applicant must operate as a sole proprietorship or as an individual [P160].
+*   The applicant must obtain approval from the Ministry of Health (MOH) for the interior design requirements of the truck or trailer [P160].
+*   The applicant must reserve sales sites through the relevant Municipality [P160].
+*   The applicant must provide a permanent mailing address [P160].
+*   The applicant must register the vehicle at the General Directorate of Traffic Services after obtaining a commercial register with the necessary licenses [P160, P161].
+
+Note that holders of virtual commercial registers are not entitled to permits to bring in foreign workers [P160].",12279,233,3.55,19/11/2026,,40,2,16.0,0.003415,"T1, P160, P161",
+17,Development,COM,The area dataset shows the Capital Governorate's area jumping between 2013 and 2014. What changed?,"The change in the Capital Governorate's area between 2013 and 2014 was due to a change in governorate boundaries [T1]. Up to 2013, the area dataset lists five governorates, including the Central Governorate, while from 2014 it lists four [T1]. Consequently, areas before and after 2014 cannot be compared directly [T1].",12432,116,3.04,19/11/2026,,35,2,2.8,0.003279,T1,
+20,Development,UNA,What is the average monthly rent for a shop in block 338?,"This is not available in the sources. The provided documents and datasets cover commercial registration laws, licensing procedures, business locations, population, land use, and area, but they do not record information about rents or prices.",5987,43,1.48,19/11/2026,declined,23,1,0.0,0.001559,,
+23,Development,UNA,How many people live in block 338?,This is not available in the sources. The available population figures are provided only by governorate [T1].,6039,22,1.34,19/11/2026,declined; unknown citations: T1,18,1,0.0,0.001541,T1,
+25,Development,UNA,How much land in the Southern Governorate was classified as “Other” in September 2025?,"This is not available in the sources. The record for land classified as ""Other"" in the Southern Governorate for September 2025 has no value in the source [T1].",11672,76,2.28,19/11/2026,declined,29,2,0.0,0.003029,T1,
+27,Development,CTR,Does the governorate with the most residential land also have the most supermarkets and hypermarkets?,"No, the governorate with the most residential land does not have the most supermarkets and hypermarkets.
+
+The Northern Governorate has the highest amount of residential land, totaling 37.31 km² [T3]. However, the Capital Governorate has the highest number of supermarkets and hypermarkets, with 164 registered businesses [T2].
+
+In comparison, the Northern Governorate has 61 supermarkets and hypermarkets, while the Capital Governorate has 16.6 km² of residential land [T2, T3].",20094,187,3.58,19/11/2026,,25,3,1.0,0.005301,"T3, T2",
+28,Development,CTR,Has Bahrain's population grown every year since 2010?,"No, Bahrain's population has not grown every year since 2010 [T1]. The total population fell between 2010 and 2011, between 2018 and 2019, and between 2019 and 2020 [T1].",13943,96,2.38,19/11/2026,,22,2,0.6,0.003628,T1,
+30,Development,DIR,What was the area of the Northern Governorate in 2024?,The area of the Northern Governorate in 2024 was 145.69 km² [T1].,12690,51,2.21,19/11/2026,,23,2,1.3,0.003247,T1,
+33,Development,DIR,In which block and governorate is Waitrose listed?,"Waitrose is listed in block 328, in the Capital Governorate [T1].",12527,36,3.11,19/11/2026,,18,2,17.0,0.003184,T1,
+34,Development,DIR,In which block and governorate is McLaren Car Showroom listed?,"McLaren Car Showroom is listed in block 316 of the Capital Governorate [T1]. Additionally, McLaren Bahrain is listed in block 701 of the Capital Governorate [T1].",12396,69,2.84,19/11/2026,,19,2,2.0,0.003201,T1,
