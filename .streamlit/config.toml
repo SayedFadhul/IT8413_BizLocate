@@ -1,0 +1,32 @@
+# Look of the app (G3 colour scheme, 60/30/10):
+#   cream #F4EDE0 = 60% (page), navy #14213D = 30% (sidebar, header, summary cards, text),
+#   coral #FF6B5B = 10% (buttons, active tab, highlights).
+# Extra styles (cards, page header, tabs) are in app/ui_style.py.
+# The chart colours were checked for colour-blind separation and 3:1 contrast on the card colour #FBF7F0.
+
+[theme]
+base = "light"
+primaryColor = "#FF6B5B"
+backgroundColor = "#F4EDE0"
+secondaryBackgroundColor = "#EAE0CE"
+textColor = "#14213D"
+linkColor = "#A63A2B"
+borderColor = "#DCCDB4"
+showWidgetBorder = true
+baseRadius = "0.6rem"
+buttonRadius = "0.6rem"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap, sans-serif"
+headingFont = "Plus Jakarta Sans:https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap, sans-serif"
+metricValueFontSize = "1.8rem"
+metricValueFontWeight = 700
+dataframeHeaderBackgroundColor = "#E7DCC8"
+dataframeHeaderTextColor = "#14213D"
+chartCategoricalColors = ["#2F5D9E", "#E8594A", "#1E9A84", "#B98414", "#8257B8", "#4F8F2F", "#C2477D", "#2E86C1"]
+
+[theme.sidebar]
+backgroundColor = "#14213D"
+secondaryBackgroundColor = "#1F2F55"
+textColor = "#F4EDE0"
+borderColor = "#2E4170"
+primaryColor = "#FF6B5B"
+linkColor = "#FF8F82"

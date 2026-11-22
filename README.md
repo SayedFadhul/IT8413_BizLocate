@@ -39,12 +39,12 @@ The documents and their search index come with the code (in `documents/`), so th
 
 ## Using the app
 
-- **Sidebar:** the version (v1 or v2) and the settings in use (F10), and the filters (F2).
-- **📊 Dashboard:** summary figures, charts and a map for the filters (F3).
-- **💬 Ask:** questions about the data, the documents or both. Answers cite figures as `[T1]` and passages as `[P12]`, and *Sources* shows them in full. Follow-up questions work. When the sources cannot answer, the reply starts with “This is not available in the sources.” (F4–F8)
-- **📄 Report:** downloads an HTML report for the filters (F9).
-- **🧾 Query log:** every question with its answer, citations, time, tokens and cost (F10).
-- **🗂️ Data & sources:** the datasets, every preparation step and the sources (F1).
+- **Sidebar:** the version (v1 or v2) and the settings in use (F10), and the filters (F2): governorates, then Businesses, Population and Land use sections; *Reset filters* selects everything again.
+- **Dashboard:** summary figures, charts and a map for the filters (F3).
+- **Ask:** questions about the data, the documents or both. Answers cite figures as `[T1]` and passages as `[P12]`, and *Sources* shows them in full. Follow-up questions work. When the sources cannot answer, the reply starts with “This is not available in the sources.” (F4–F8)
+- **Report:** downloads an HTML report for the filters (F9).
+- **Query log:** every question with its answer, citations, time, tokens and cost (F10).
+- **Data & sources:** the datasets, every preparation step and the sources (F1).
 
 ## How it answers a question
 
@@ -78,7 +78,7 @@ Details: [data/sources.csv](data/sources.csv) (every source with its licence or 
 | Path | What it is |
 |---|---|
 | `streamlit_app.py` | the app |
-| `app/` | the code, one file per feature: `data_prep` (F1), `filters` (F2), `dashboard` (F3), `data_tools` (F4), `documents` and `retrieval` (F5), `assistant` (F6–F8), `report` (F9), `query_log` (F10), plus `config` (all settings) and `gemini` (the API client) |
+| `app/` | the code, one file per feature: `data_prep` (F1), `filters` (F2), `dashboard` (F3), `data_tools` (F4), `documents` and `retrieval` (F5), `assistant` (F6–F8), `report` (F9), `query_log` (F10), plus `config` (all settings), `gemini` (the API client), and `palette` and `ui_style` (colours and look; the theme is in `.streamlit/config.toml`) |
 | `data/` | the six datasets, unchanged, with `sources.csv` and the documents' checksums |
 | `documents/` | the 8 official PDFs, unchanged, the OCR text of the two scans and the search index |
 | `scripts/` | check the documents against the publishers, rebuild the index, run evaluations |

@@ -12,28 +12,34 @@ import streamlit as st
 
 from app import query_log
 from app.config import Settings, describe_v2_change
+from app.ui_style import card, card_title
 
 
 def render_log(settings: Settings) -> None:
     records = query_log.read()
-    st.markdown(f"Every question asked in the app is saved in `logs/query_log.jsonl` (one JSON record per question). "
-                f"Settings now: **{settings.version}**, model `{settings.model}`. Changed in v2: {describe_v2_change()}.")
+    st.caption(f":material/save: Every question asked in the app is saved in `logs/query_log.jsonl` (one JSON record "
+               f"per question). Settings now: **{settings.version}**, model `{settings.model}`. "
+               f"Changed in v2: {describe_v2_change()}.")
     if not records:
-        st.info("No questions have been asked yet.")
+        st.info("No questions have been asked yet.", icon=":material/inbox:")
         return
     df = query_log.to_frame(records)
     c = st.columns(5)
-    c[0].metric("Questions logged", f"{len(df):,}")
-    c[1].metric("Declined (not in sources)", f"{int(df['refused'].sum()):,}")
-    c[2].metric("Avg input tokens", f"{df['input_tokens'].mean():,.0f}")
-    c[3].metric("Avg latency (s)", f"{df['latency_s'].mean():.1f}")
-    c[4].metric("Cost per 1,000 questions ($)", f"{df['cost_usd'].mean() * 1000:.2f}")
-    st.dataframe(df.iloc[::-1], hide_index=True)
-    c = st.columns(2)
-    c[0].download_button("Download the full log (JSON Lines)", "\n".join(json.dumps(r, ensure_ascii=False) for r in records),
-                         file_name="query_log.jsonl", mime="application/json", width="stretch")
-    c[1].download_button("Download the table (CSV)", df.to_csv(index=False), file_name="query_log.csv",
-                         mime="text/csv", width="stretch")
-    with st.expander("Show one full record"):
+    c[0].metric(":material/forum: Questions logged", f"{len(df):,}")
+    c[1].metric(":material/block: Declined (not in sources)", f"{int(df['refused'].sum()):,}")
+    c[2].metric(":material/token: Avg input tokens", f"{df['input_tokens'].mean():,.0f}")
+    c[3].metric(":material/timer: Avg latency (s)", f"{df['latency_s'].mean():.1f}")
+    c[4].metric(":material/payments: Cost per 1,000 questions ($)", f"{df['cost_usd'].mean() * 1000:.2f}")
+    with card("log_table"):
+        card_title("receipt_long", "Every question, newest first", sub="Answer, citations, time, tokens and cost")
+        st.dataframe(df.iloc[::-1], hide_index=True)
+        c = st.columns(2)
+        c[0].download_button("Download the full log (JSON Lines)",
+                             "\n".join(json.dumps(r, ensure_ascii=False) for r in records),
+                             file_name="query_log.jsonl", mime="application/json", icon=":material/download:",
+                             width="stretch")
+        c[1].download_button("Download the table (CSV)", df.to_csv(index=False), file_name="query_log.csv",
+                             mime="text/csv", icon=":material/table_view:", width="stretch")
+    with st.expander("Show one full record", icon=":material/data_object:"):
         i = st.number_input("Record number (1 = first)", 1, len(records), len(records))
         st.json(records[int(i) - 1])

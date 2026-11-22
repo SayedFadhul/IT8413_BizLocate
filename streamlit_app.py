@@ -20,9 +20,12 @@ import importlib.util
 
 import streamlit as st
 
-from app.config import V2_CHANGE, describe_v2_change, get_api_key, get_settings
+from app.config import DATA_EXTRACTED, V2_CHANGE, describe_v2_change, get_api_key, get_settings
+from app.ui_style import apply_style, footer, page_header, sidebar_brand
 
-st.set_page_config(page_title="BizLocate BH", layout="wide")
+st.set_page_config(page_title="BizLocate BH", page_icon=":material/location_on:", layout="wide")
+apply_style()
+DATA_DATE = DATA_EXTRACTED.split(" (")[0]          # e.g. "17/10/2026"
 
 # The files each feature needs.
 FEATURES = {
@@ -55,11 +58,11 @@ ds = get_data() if has("data") else None
 
 # ------------------------------------------------------------------ sidebar: settings in use (F10)
 with st.sidebar:
-    st.header("BizLocate BH")
+    sidebar_brand()
     version = st.segmented_control("Version", ["v1", "v2"], default="v1", key="version",
                                    help="v2 = v1 with exactly one setting changed (brief 7.5).") or "v1"
     settings = get_settings(version)
-    with st.expander("Settings in use", expanded=False):
+    with st.expander("Settings in use", expanded=False, icon=":material/tune:"):
         st.markdown(
             f"**Model:** `{settings.model}`  \n**Embeddings:** `{settings.embedding_model}`  \n"
             f"**Temperature:** {settings.temperature} · **Thinking:** {settings.thinking_level}  \n"
@@ -76,7 +79,7 @@ with st.sidebar:
     if not key:
         key = st.text_input("Gemini API key", type="password", key="api_key_input",
                             help="Used only in this browser session; never saved. Or put it in a .env file (README, step 4).")
-    st.caption("API key: " + ("found ✅" if key else "missing ❌ (README, step 4)"))
+    st.caption(":material/key: API key: found" if key else ":material/key_off: API key: missing (README, step 4)")
     st.divider()
 
 
@@ -89,12 +92,11 @@ if ds is not None and has("dashboard"):
     selection = ui_dashboard.sidebar_filters(options)
 
 # ------------------------------------------------------------------ main page
-st.title("BizLocate BH")
-st.caption("Business Location and Licensing Assistant · IT8413 Group Project · G3 · "
-           f"model `{settings.model}` · {version}")
+page_header(settings.model, version, DATA_DATE)        # shows the model and version in use (F10)
 
-tab_dash, tab_ask, tab_report, tab_log, tab_data = st.tabs(
-    ["📊 Dashboard", "💬 Ask", "📄 Report", "🧾 Query log", "🗂️ Data & sources"])
+TABS = [":material/space_dashboard: Dashboard", ":material/forum: Ask", ":material/description: Report",
+        ":material/receipt_long: Query log", ":material/dataset: Data & sources"]
+tab_dash, tab_ask, tab_report, tab_log, tab_data = st.tabs(TABS)
 
 with tab_dash:
     if selection is not None:
@@ -121,3 +123,5 @@ with tab_data:
         importlib.import_module("app.ui_data").render_data_page(ds)
     else:
         not_yet("data")
+
+footer(DATA_DATE)
