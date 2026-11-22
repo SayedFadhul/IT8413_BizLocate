@@ -57,3 +57,21 @@ def test_real_collection():
     assert all(1 <= c.words <= 200 for c in chunks)
     assert not any("| Food Safety Guideline in Food Premises" in c.text for c in chunks)   # page headers removed
     assert any("Article (10)" in c.sections for c in chunks if c.doc == "D2")
+
+
+def test_every_amended_document_carries_a_currency_note():
+    """Tutor's feedback: the legal texts may have been amended. Every document whose entry in
+    data/sources.csv records an amendment has a note, which goes with each of its passages."""
+    import csv
+    import re
+
+    from app.config import SOURCES_CSV
+    from app.documents import DOC_INFO
+    sources = {r["code"]: r for r in csv.DictReader(open(SOURCES_CSV, encoding="utf-8-sig"))}
+    for code, (name, note) in DOC_INFO.items():
+        if re.search(r"amend", sources[code]["version"], re.I):
+            assert note, f"{code} has a recorded amendment but no note"
+    d1, d2 = DOC_INFO["D1"][1], DOC_INFO["D2"][1]
+    assert "Article 1 " in d1 and "2022" in d1
+    for part in ("Article 14", "6 (paragraph 2)", "16", "20 (paragraph 1)", "21 (paragraph 1)", "2018", "2024"):
+        assert part in d2

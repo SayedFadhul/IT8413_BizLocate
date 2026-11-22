@@ -20,10 +20,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_RAW = ROOT / "data" / "raw"
 SOURCES_CSV = ROOT / "data" / "sources.csv"
 DOCS_MANIFEST = ROOT / "data" / "documents_manifest.json"
-DOCS_DIR = ROOT / "documents"          # filled by scripts/setup_sources.py, not committed
-OCR_DIR = DOCS_DIR / "ocr"             # OCR text of the two scanned PDFs (D1a, D3a), not committed
-TEXT_DIR = DOCS_DIR / "text"           # online copy only: checked text of the other six PDFs, not committed
-INDEX_DIR = DOCS_DIR / "index"         # chunk embeddings built by scripts/build_index.py, not committed
+DOCS_DIR = ROOT / "documents"          # the 8 official PDFs, unchanged (checked by scripts/setup_sources.py)
+OCR_DIR = DOCS_DIR / "ocr"             # G3's OCR text of the two scanned PDFs (D1a, D3a)
+INDEX_DIR = DOCS_DIR / "index"         # passage embeddings built by scripts/build_index.py
 LOG_DIR = ROOT / "logs"                # query logs (F10), not committed
 RESULTS_DIR = ROOT / "results"         # evaluation run outputs (answers, tokens, latency)
 
@@ -57,7 +56,7 @@ class Settings:
     max_generation_calls: int = 3                   # tool-use loop: at most 3 generation calls per question
     history_turns: int = 3                          # follow-ups (F8): previous question/answer pairs sent again
     # --- retrieval (F5)
-    embedding_model: str = "gemini-embedding-2"     # as in Labs 3.1 and 3.3 (proposal said gemini-embedding-001; see CHANGES.md)
+    embedding_model: str = "gemini-embedding-2"     # as in Labs 3.1 and 3.3 (the proposal said gemini-embedding-001)
     chunk_words: int = 200                          # target maximum words per passage (Lab 3.3 used 200)
     top_k: int = 5                                  # passages retrieved for each question
     # --- pacing for batch runs (evaluation): pause between questions, outside the latency timer

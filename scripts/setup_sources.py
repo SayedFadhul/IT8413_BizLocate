@@ -1,11 +1,8 @@
-"""Download the document collection (D1-D6 with amendments D1a, D3a) into documents/.
+"""Check the document collection (D1-D6 with amendments D1a, D3a) in documents/ against the publishers.
 
-Why a script: the MOIC and MOH website terms restrict republishing, so the documents
-(official English PDFs) are NOT stored in this public repository. Anyone who clones the repo runs this
-script once to fetch the exact files the tool was built and evaluated on.
-
-What it does for each file listed in data/documents_manifest.json:
-  1. downloads it from the official URL (or skips it if a correct copy already exists),
+The official English PDFs are stored unchanged in documents/ (see ATTRIBUTION.md), so a clone has
+everything it needs. This script checks them, and fetches any file that is missing:
+  1. downloads a file from its official URL only if it is missing (or every file with --check),
   2. checks its SHA-256 against the value recorded when G3 last verified the sources,
   3. prints a change report: OK / CHANGED / FAILED.
 
@@ -15,7 +12,7 @@ based on it (licence clause 2 and the tutor's request to keep every answer curre
 
 Two files (D1a, D3a) are scans with no text layer. The tool reads their text from
 documents/ocr/ (one "<file> (OCR).txt" per scan, with "=== PAGE n ===" markers):
-  - the group's OCR text (shared privately, not in Git): copy it in with  --ocr-dir <folder>
+  - the group's OCR text (stored in documents/ocr/; or copy it in with  --ocr-dir <folder>)
     and its SHA-256 is checked against the manifest (OCR OK / OCR CHANGED);
   - or, without it, create a transcription with Gemini:  --transcribe  (needs the API key;
     marked "model transcription" because it is not the version G3 checked).

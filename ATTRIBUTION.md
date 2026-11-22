@@ -31,4 +31,10 @@ If iGA or a publishing entity asks, G3 will stop using the datasets and remove t
 
 ## Documents
 
-The legal and guidance documents (D1–D6, with amendments D1a and D3a: official English PDFs) are **not** stored here, because the MOIC and MOH website terms restrict republishing. `scripts/setup_sources.py` downloads them from their official URLs. Their publishers and publishing pages are listed in `data/sources.csv`.
+The legal and guidance documents (D1–D6, with the amendments D1a and D3a) are the official English PDFs published by MOIC and MOH. They are stored **unchanged** in `documents/`, so the tool runs as submitted, on a computer and online, with exactly the files it was built and evaluated on:
+
+- `documents/`: the 8 PDFs. Their official URLs and SHA-256 checksums are in `data/documents_manifest.json`; a test checks every file against them, and `python scripts/setup_sources.py --check` compares them with the publishers' current files.
+- `documents/ocr/`: G3's OCR text of the two scanned PDFs (D1a, D3a).
+- `documents/index/`: the search index built from them.
+
+Bahraini legislation and official documents are not protected by copyright (Law No. 22 of 2006, Article 4), but the MOIC and MOH website terms restrict reproducing their content (MOIC asks for prior written permission: https://www.moic.gov.bh/en/node/2671). The documents are kept here only for this course project, credited to their publishers with their publishing pages in `data/sources.csv`, and G3 will remove them from this repository if MOIC, MOH or the course asks.

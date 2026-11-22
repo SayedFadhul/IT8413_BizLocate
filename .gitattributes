@@ -1,0 +1,5 @@
+# Keep the documents byte for byte as checked (their SHA-256 is in data/documents_manifest.json):
+# no line-ending changes on any computer.
+*.pdf binary
+documents/ocr/*.txt -text
+documents/index/*.json -text

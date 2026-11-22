@@ -5,8 +5,8 @@
 .streamlit/secrets.toml
 secrets.toml
 
-# ---- documents: website terms restrict reproduction; scripts/setup_sources.py downloads them ----
-documents/
+# ---- documents are stored unchanged (see ATTRIBUTION.md); a --check run saves any publisher update beside them ----
+documents/*_NEW.pdf
 
 # ---- run output ----
 logs/

@@ -4,9 +4,7 @@
     "url": "https://www.moic.gov.bh/sites/default/files/2021-10/Legislative%20Decree%20no.%20%2827%29%20of%202015%20Concerning%20the%20Commercial%20Register.pdf",
     "sha256": "2094c60df7a468bdeb17d511ec400966d2b71c3d882b8b1894568f73ed201285",
     "bytes": 41370,
-    "checked": "2026-11-18",
-    "text_sha256": "b394c16b89a50bfa91f42179e830164f0ff7dab268ba618a9b5d74d50dbe81b0",
-    "text_method": "pypdf 7.1.1 text layer, page by page (app/documents.py); used by the online copy"
+    "checked": "2026-11-18"
   },
   "D1a_LD52-2018_Amendment_Commercial_Register.pdf": {
     "code": "D1a",
@@ -24,18 +22,14 @@
     "url": "https://www.moic.gov.bh/sites/default/files/2021-10/Order%20no.%20%28126%29%20of%202016%20Concerning%20the%20Promulgation%20of%20the%20Implementing%20Regulation%20of%20Legislative%20Decree%20no.%20%2827%29%20of%202015%20concerning%20the%20Commercial%20Register.pdf",
     "sha256": "f7107a88f4117fdf983542cfc787f001f4012e79063936e409782a500892111d",
     "bytes": 53531,
-    "checked": "2026-11-18",
-    "text_sha256": "481ee1b77e750fc86bfff5a9a0e744d340784a8ff821a5236f7bd93f8f795e16",
-    "text_method": "pypdf 7.1.1 text layer, page by page (app/documents.py); used by the online copy"
+    "checked": "2026-11-18"
   },
   "D3_MOIC_Procedures_Guide_Establishments_Companies.pdf": {
     "code": "D3",
     "url": "https://www.moic.gov.bh/sites/default/files/2024-03/Procedures%20Guide%20for%20Establishments%20and%20Commercial%20Companies.pdf",
     "sha256": "850c8a590b8e6743bb3c386bcfc5592e7fd1a9ab582b1b5f00218847c03c9312",
     "bytes": 380425,
-    "checked": "2026-11-18",
-    "text_sha256": "a58095c95647e589fb97c5d139e156c742221dda16c1a93989b898d88011b158",
-    "text_method": "pypdf 7.1.1 text layer, page by page (app/documents.py); used by the online copy"
+    "checked": "2026-11-18"
   },
   "D3a_LD28-2020_Amendment_Companies_Law.pdf": {
     "code": "D3a",
@@ -53,26 +47,20 @@
     "url": "https://www.moh.gov.bh/Content/Upload/File/638242460024477544-Food-Safety-Guidelines_EN.pdf",
     "sha256": "9dafedcd1ec5c9b2d38cb84989a02443041adaf8da05d6f18bf0d2126441cd6c",
     "bytes": 381613,
-    "checked": "2026-11-18",
-    "text_sha256": "7b074e808ead390e4c28edfb859cd55a5238e4c8a52c682d9fdd067efa8c82da",
-    "text_method": "pypdf 7.1.1 text layer, page by page (app/documents.py); used by the online copy"
+    "checked": "2026-11-18"
   },
   "D5_MOIC_Virtual_Store_Sijili_Guide.pdf": {
     "code": "D5",
     "url": "https://www.moic.gov.bh/sites/default/files/2026-01/Virtual%20CR%20Sijili%20Guide.pdf",
     "sha256": "e60da46d7caf2ecd75ffa1456bc3bb88b8adcb015d2f35ae83b6a7dc6b13a74f",
     "bytes": 358600,
-    "checked": "2026-11-18",
-    "text_sha256": "917aad051c07d3271a88195cc175d16c34e5417a40445cb97ccce5ed36ff5a86",
-    "text_method": "pypdf 7.1.1 text layer, page by page (app/documents.py); used by the online copy"
+    "checked": "2026-11-18"
   },
   "D6_MOIC_Food_Truck_Licensing.pdf": {
     "code": "D6",
     "url": "https://www.moic.gov.bh/sites/default/files/2024-02/Food%20Truck%20licensing.pdf",
     "sha256": "4e180f0af3a6efe3a32004138a68e4fddf6ae927f7ee4aa0d51aed4222c1204f",
     "bytes": 130859,
-    "checked": "2026-11-18",
-    "text_sha256": "903528dbc4b3e6fa7c8b64403ec9c5baeeb1e7042645db98a47a9b490eb58859",
-    "text_method": "pypdf 7.1.1 text layer, page by page (app/documents.py); used by the online copy"
+    "checked": "2026-11-18"
   }
 }

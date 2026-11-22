@@ -51,6 +51,7 @@ Rules:
 - When two documents differ, the newer amendment (D1a or D3a) is the current rule: say so.
 - Do not rank areas or recommend where to open; give the evidence for the areas asked about.
 - Mention a caveat from a function's notes only when it matters for the question.
+- If the Note of a passage you use says that the article you rely on was amended or is out of date, say so in your answer.
 - Write short, plain English: the direct answer first, then the details."""
 
 FOLLOW_UP_WORDS = re.compile(r"\b(it|its|that|this|those|these|they|them|there|same|also|above|previous|instead)\b", re.I)

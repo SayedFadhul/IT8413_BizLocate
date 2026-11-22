@@ -3,9 +3,7 @@
 Method (as in Lab 3.3, "Splitting the Laws into Chunks"):
   1. Read each document page by page, so every passage keeps its page numbers for citations.
      Six PDFs have a text layer (read with pypdf). D1a and D3a are scans: their text is the
-     group's checked OCR text in documents/ocr/ (made by scripts/setup_sources.py).
-     The online copy of the app has no PDFs: it reads the same page text from documents/text/,
-     written from its Secrets and checked against the SHA-256 in the manifest (app/cloud_setup.py).
+     group's checked OCR text in documents/ocr/.
   2. Split each page into paragraphs: a new paragraph starts at a blank line, a heading
      (Article (10), Section 5, 5.4.5 ...) or a list item.
   3. Group whole paragraphs into passages of at most `chunk_words` words (200 in v1, as in the lab),
@@ -14,7 +12,7 @@ Method (as in Lab 3.3, "Splitting the Laws into Chunks"):
      so most passages hold one rule.
   4. Give each passage an id, P1, P2, ... which the model cites as [P12].
 
-The documents and their text are never committed (website terms); they live in documents/.
+The PDFs are stored unchanged in documents/; their official URLs and SHA-256 are in data/documents_manifest.json.
 """
 from __future__ import annotations
 
@@ -22,16 +20,20 @@ import json
 import re
 from dataclasses import asdict, dataclass, field
 
-from app.config import DOCS_DIR, DOCS_MANIFEST, OCR_DIR, TEXT_DIR
+from app.config import DOCS_DIR, DOCS_MANIFEST, OCR_DIR
 
 # Short names and currency notes shown with every passage, so the model (and the reader)
 # knows which document a rule comes from and whether a newer text replaces it.
 DOC_INFO = {
     "D1": ("Legislative Decree No. (27) of 2015 concerning the Commercial Register (MOIC)",
-           "Articles 20(a)(1)-(3) and 27 were amended by D1a in 2018."),
+           "Articles 20(a)(1)-(3) and 27 were amended by D1a in 2018. A definition in Article 1 was amended "
+           "by Law No. (9) of 2022, which has no English text."),
     "D1a": ("Legislative Decree No. (52) of 2018 amending the Commercial Register law (MOIC)",
             "Current text of the fines and penalties it replaces in D1."),
-    "D2": ("Order No. (126) of 2016, Implementing Regulation of the Commercial Register law (MOIC)", ""),
+    "D2": ("Order No. (126) of 2016, Implementing Regulation of the Commercial Register law (MOIC)",
+           "Article 14 was amended by Decision No. (68) of 2018, and Articles 6 (paragraph 2), 16, 20 (paragraph 1) "
+           "and 21 (paragraph 1) by Decision No. (62) of 2024. Neither amendment has an English text, so these "
+           "articles may not be the current rule."),
     "D3": ("MOIC Procedures Guide for Establishments and Commercial Companies",
            "Guide file from 2022; its limited liability company (WLL) section predates D3a and is out of date."),
     "D3a": ("Decree-Law No. (28) of 2020 amending the Commercial Companies Law (MOIC)",
@@ -110,23 +112,10 @@ def ocr_file_for(name: str) -> str:
     return name.replace(".pdf", " (OCR).txt")
 
 
-def text_file_for(name: str) -> str:
-    return name.replace(".pdf", " (text).json")
-
-
-def pdf_page_texts(path) -> list[str]:
-    """The text layer of a PDF, one string per page (pypdf)."""
-    from pypdf import PdfReader
-    return [p.extract_text() or "" for p in PdfReader(str(path)).pages]
-
-
-def text_copy_bytes(page_texts: list[str]) -> bytes:
-    """A PDF's page texts as stored for the online copy: a JSON list. Its SHA-256 is in the manifest."""
-    return json.dumps(page_texts, ensure_ascii=False).encode("utf-8")
-
-
 def load_pages() -> list[Page]:
     """Every page of every document, in manifest order. Raises FileNotFoundError if a file is missing."""
+    from pypdf import PdfReader
+
     pages: list[Page] = []
     for name, info in manifest().items():
         doc = info["code"]
@@ -139,12 +128,9 @@ def load_pages() -> list[Page]:
             for num, text in zip(parts[1::2], parts[2::2]):
                 pages.append(Page(doc, name, int(num), text))
         else:
-            pdf, copy = DOCS_DIR / name, TEXT_DIR / text_file_for(name)
-            if pdf.exists() or not copy.exists():
-                texts = pdf_page_texts(pdf)                 # raises FileNotFoundError if both are missing
-            else:                                           # online copy: the checked text of the same PDF
-                texts = json.loads(copy.read_text(encoding="utf-8"))
-            pages.extend(Page(doc, name, i, t) for i, t in enumerate(texts, start=1))
+            reader = PdfReader(str(DOCS_DIR / name))
+            for i, p in enumerate(reader.pages, start=1):
+                pages.append(Page(doc, name, i, p.extract_text() or ""))
     return pages
 
 

@@ -59,5 +59,5 @@ def render_data_page(ds: Datasets) -> None:
     if present == total:
         st.success(f"Document collection ready: {present} of {total} files in documents/.")
     else:
-        st.warning(f"Documents: {present} of {total} files found. Run `python scripts/setup_sources.py` (README, step 5).")
+        st.warning(f"Documents: {present} of {total} files found. Run `python scripts/setup_sources.py` to fetch the missing ones.")
     st.info(LICENCE_STATEMENT + "\n\n" + OUR_WORK_STATEMENT)
