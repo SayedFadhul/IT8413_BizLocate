@@ -2,6 +2,7 @@
 import pytest
 
 from app import config
+from app.config import get_settings
 
 
 def test_v1_settings_match_the_proposal():
@@ -42,3 +43,10 @@ def test_cost_uses_the_spreadsheet_prices():
     # 1M input tokens at $0.25 + 1M output tokens at $1.50
     assert config.cost_usd(1_000_000, 1_000_000) == pytest.approx(1.75)
     assert config.cost_usd(0, 0, 1_000_000) == pytest.approx(config.PRICE_EMBED_PER_M)
+    assert config.cost_usd(1_000_000, 1_000_000, model=get_settings("v1").model) == pytest.approx(1.75)
+
+
+def test_a_backup_answer_is_priced_as_the_backup_model():
+    # 1M input tokens at $0.30 + 1M output tokens at $2.50 (gemini-3.5-flash-lite)
+    backup = get_settings("v1").fallback_model
+    assert config.cost_usd(1_000_000, 1_000_000, model=backup) == pytest.approx(2.80)

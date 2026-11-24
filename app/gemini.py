@@ -1,8 +1,9 @@
 """Gemini API client, written the way the course labs do it (Labs 2.2-3.3).
 
   - One `genai.Client` with the key from the environment (never written in code).
-  - `send()` retries a request twice, 30 and 60 seconds later, when the service is busy (503)
-    or a free-tier rate limit is reached (429), as in Lab 3.3.
+  - `send()` retries a request twice when the service is busy (503) or a free-tier rate limit is
+    reached (429): 30 and 60 seconds later by default, as in Lab 3.3 (evaluation runs). The app passes
+    shorter pauses so a person is not left waiting, and shows each wait on screen (`on_wait`).
   - Instead of a fixed pause after every request, the client waits only when the next request
     would go over the per-minute limit (15 generation requests, 100 embedding requests). The time
     spent waiting is recorded, so latency can be reported with and without it.
@@ -13,6 +14,7 @@ from __future__ import annotations
 import logging
 import time
 from collections import deque
+from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from google import genai
@@ -31,6 +33,16 @@ def failure_tag(err: Exception) -> str:
     if code == 503:
         return "FAILED: SERVER BUSY (503)"
     return f"FAILED: {type(err).__name__} {code or ''}".strip()
+
+
+def is_busy(err: Exception) -> bool:
+    """True for the two errors that usually pass: server busy (503) and rate limit (429)."""
+    return getattr(err, "code", None) in (429, 503)
+
+
+def busy_text(code) -> str:
+    return ("Google's server is busy (503)." if code == 503
+            else "The free-tier request limit was reached (429).")
 
 
 class RateLimiter:
@@ -86,27 +98,40 @@ class Gemini:
     _gen_limiter = RateLimiter(GENERATION_REQUESTS_PER_MINUTE)     # shared by every Gemini object in the process
     _emb_limiter = RateLimiter(EMBEDDING_REQUESTS_PER_MINUTE)
 
-    def __init__(self, api_key: str, settings: Settings):
+    def __init__(self, api_key: str, settings: Settings, retry_pauses: tuple[float, ...] = (30.0, 60.0),
+                 on_wait: Callable[[str], None] | None = None):
         if not api_key:
             raise ValueError("No Gemini API key. Put GEMINI_API_KEY in a .env file (README, step 4).")
         self.client = genai.Client(api_key=api_key)
         self.settings = settings
+        self.model = settings.model             # generation model (the app may switch to settings.fallback_model)
+        self.retry_pauses = tuple(retry_pauses)
+        self.on_wait = on_wait
+
+    def notify(self, message: str) -> None:
+        """Tell the person waiting what is happening (the app shows it; scripts pass nothing)."""
+        if self.on_wait is not None:
+            self.on_wait(message)
 
     # ----------------------------------------------------------------- retries (Lab 3.3)
     def send(self, request, limiter: RateLimiter, usage: Usage | None = None):
-        """Submit a request, retrying twice if the service is busy (503) or the rate limit is reached (429)."""
-        for attempt in range(3):
+        """Submit a request. If the service is busy (503) or the rate limit is reached (429),
+        wait and try again, once for each pause in `retry_pauses`."""
+        attempts = len(self.retry_pauses) + 1
+        for attempt in range(attempts):
             waited = limiter.wait()
             if usage:
                 usage.wait_seconds += waited
             try:
                 return request()
             except errors.APIError as err:
-                if err.code not in (429, 503) or attempt == 2:
+                if not is_busy(err) or attempt == attempts - 1:
                     raise
-                pause = 30 * (attempt + 1)
+                pause = self.retry_pauses[attempt]
                 if usage:
                     usage.wait_seconds += pause
+                self.notify(f"{busy_text(err.code)} Trying again in {pause:g} seconds "
+                            f"(attempt {attempt + 2} of {attempts}).")
                 time.sleep(pause)
 
     # ----------------------------------------------------------------- generation
@@ -130,8 +155,12 @@ class Gemini:
     def generate(self, contents, usage: Usage, system_instruction: str | None = None,
                  tools: list | None = None, tool_mode: str | None = None):
         cfg = self.config(system_instruction, tools, tool_mode)
-        response = self.send(lambda: self.client.models.generate_content(
-            model=self.settings.model, contents=contents, config=cfg), self._gen_limiter, usage)
+        try:
+            response = self.send(lambda: self.client.models.generate_content(
+                model=self.model, contents=contents, config=cfg), self._gen_limiter, usage)
+        except errors.APIError as err:
+            err.stage = "generation"            # lets the app tell a busy model from a busy embedding service
+            raise
         usage.add_response(response)
         return response
 

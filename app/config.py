@@ -36,10 +36,20 @@ LISTINGS_UPDATED = "28/04/2026"        # last portal update of the three busines
 PRICE_INPUT_PER_M = 0.25
 PRICE_OUTPUT_PER_M = 1.50              # thinking tokens are billed as output tokens
 PRICE_EMBED_PER_M = 0.15
+# Paid-tier prices per model (input, output), US$ per 1M tokens; read on the Gemini API pricing page,
+# 24/11/2026. Both models are free of charge on the free tier: these give the estimated cost metric.
+MODEL_PRICES_PER_M = {
+    "gemini-3.1-flash-lite": (PRICE_INPUT_PER_M, PRICE_OUTPUT_PER_M),
+    "gemini-3.5-flash-lite": (0.30, 2.50),     # the backup model (app only)
+}
 
 # Free-tier limits (proposal Section 5). The client waits instead of going over them.
 GENERATION_REQUESTS_PER_MINUTE = 14    # limit is 15; one request kept spare
 EMBEDDING_REQUESTS_PER_MINUTE = 90     # limit is 100
+
+# When Google is busy (503) or a limit is hit (429), a request is tried again after these pauses (seconds).
+# The app uses short pauses, because a person is waiting; evaluation runs keep the Lab 3.3 pauses (30, 60).
+APP_RETRY_PAUSES = (5.0, 15.0)
 
 
 @dataclass(frozen=True)
@@ -49,7 +59,9 @@ class Settings:
     version: str = "v1"                             # "v1" or "v2" (F10 shows which)
     # --- model (prompting and tool use)
     model: str = "gemini-3.1-flash-lite"            # generation + function calling (proposal Section 5)
-    fallback_model: str = "gemini-3.5-flash-lite"   # only if the main model is retired (all runs repeated on it)
+    fallback_model: str = "gemini-3.5-flash-lite"   # app only: answers when the main model stays busy (shown and
+                                                    # logged); evaluation runs never use it. If the main model is
+                                                    # retired, all runs are repeated on this one.
     temperature: float = 1.0                        # Gemini 3 default (course labs)
     thinking_level: str = "default"                 # "default" = the model's own default; or minimal/low/medium/high
     max_output_tokens: int = 1024
@@ -120,7 +132,8 @@ def get_api_key() -> str | None:
         return None
 
 
-def cost_usd(input_tokens: int, output_tokens: int, embed_tokens: int = 0) -> float:
-    """Estimated cost of one question in US$, from the token counts and the prices above."""
-    return (input_tokens * PRICE_INPUT_PER_M + output_tokens * PRICE_OUTPUT_PER_M
-            + embed_tokens * PRICE_EMBED_PER_M) / 1_000_000
+def cost_usd(input_tokens: int, output_tokens: int, embed_tokens: int = 0, model: str | None = None) -> float:
+    """Estimated cost of one question in US$, from the token counts and the prices of the model that
+    answered (the main model's prices if the model is not listed above)."""
+    price_in, price_out = MODEL_PRICES_PER_M.get(model or "", (PRICE_INPUT_PER_M, PRICE_OUTPUT_PER_M))
+    return (input_tokens * price_in + output_tokens * price_out + embed_tokens * PRICE_EMBED_PER_M) / 1_000_000

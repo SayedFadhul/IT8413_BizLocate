@@ -1,5 +1,5 @@
 """Tests for the Gemini client helpers (app/gemini.py), with made-up responses: no API key, no network."""
-from google.genai import types
+from google.genai import errors, types
 
 from app import gemini
 from app.config import get_settings
@@ -46,6 +46,40 @@ def test_embedding_token_count():
         assert embed_token_count(r) == 24
     empty = types.EmbedContentResponse(embeddings=[types.ContentEmbedding(values=[0.1])])
     assert embed_token_count(empty) == 0
+
+
+def busy_error(code=503):
+    return errors.APIError(code, {"error": {"code": code, "message": "busy", "status": "UNAVAILABLE"}})
+
+
+def test_retries_use_the_given_pauses_and_say_so(monkeypatch):
+    slept, notes, calls = [], [], []
+    monkeypatch.setattr(gemini.time, "sleep", lambda s: slept.append(s))
+
+    def request():
+        calls.append(1)
+        if len(calls) < 3:
+            raise busy_error()
+        return "ok"
+
+    g = Gemini("test-value-not-a-key", get_settings("v1"), retry_pauses=(5, 15), on_wait=notes.append)
+    usage = Usage()
+    assert g.send(request, RateLimiter(100), usage) == "ok"
+    assert slept == [5, 15] and usage.wait_seconds == 20
+    assert "busy (503)" in notes[0] and "5 seconds" in notes[0] and "attempt 2 of 3" in notes[0]
+
+
+def test_evaluation_keeps_the_lab_pauses_and_gives_up_after_them(monkeypatch):
+    slept = []
+    monkeypatch.setattr(gemini.time, "sleep", lambda s: slept.append(s))
+    g = Gemini("test-value-not-a-key", get_settings("v1"))           # as scripts/run_eval.py creates it
+    assert g.retry_pauses == (30.0, 60.0) and g.model == get_settings("v1").model
+    try:
+        g.send(lambda: (_ for _ in ()).throw(busy_error(429)), RateLimiter(100))
+        raise AssertionError("should have raised")
+    except errors.APIError as err:
+        assert err.code == 429
+    assert slept == [30.0, 60.0]
 
 
 def test_request_settings_come_from_config():

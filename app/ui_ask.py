@@ -16,7 +16,7 @@ import streamlit as st
 
 from app import query_log
 from app.assistant import REFUSAL, Answer, Assistant
-from app.config import Settings
+from app.config import APP_RETRY_PAUSES, Settings
 from app.data_prep import Datasets
 from app.gemini import Gemini, failure_tag
 from app.retrieval import build_index, index_path, load_index
@@ -61,8 +61,16 @@ def render_answer(a: Answer, number: int) -> None:
         st.markdown(_md(a.question))
     with st.chat_message("assistant", avatar=":material/travel_explore:"):
         if a.error:
-            st.error(f"The request failed, so there is no answer: {a.error}", icon=":material/cloud_off:")
+            if "(503)" in a.error or "(429)" in a.error:
+                st.error("Google's servers are busy right now, so there is no answer. "
+                         "Wait a minute and ask again.", icon=":material/cloud_off:")
+                st.caption(f"Details: {a.error}")
+            else:
+                st.error(f"The request failed, so there is no answer: {a.error}", icon=":material/cloud_off:")
             return
+        if a.fallback_from:
+            st.info(f"Answered by the backup model `{a.model}`, because the main model `{a.fallback_from}` "
+                    "was busy. Evaluation runs use only the main model.", icon=":material/swap_horiz:")
         if a.refused:
             st.info("Declined: the answer is not available in the sources (F7).", icon=":material/block:")
         st.markdown(_md(a.text))
@@ -152,10 +160,15 @@ def render_ask(ds: Datasets, settings: Settings, api_key: str | None) -> None:
 
     if question:
         examples.empty()
-        assistant = Assistant(Gemini(api_key, settings), settings, tools=get_tools(ds), index=index)
         with conversation:
+            notice = st.empty()          # shows each retry, so a slow answer is never a mystery
+            gemini = Gemini(api_key, settings, retry_pauses=APP_RETRY_PAUSES,
+                            on_wait=lambda msg: notice.info(msg, icon=":material/hourglass_top:"))
+            assistant = Assistant(gemini, settings, tools=get_tools(ds), index=index,
+                                  fallback_model=settings.fallback_model)
             with st.spinner("Searching the documents, computing figures and writing the answer..."):
                 ans = assistant.ask(question, answers)
+            notice.empty()
         answers.append(ans)
         query_log.append(ans.log_record(session_id=st.session_state["session_id"], run="app"))
         st.rerun()                  # draw the page again with the new answer (and 'New conversation' enabled)

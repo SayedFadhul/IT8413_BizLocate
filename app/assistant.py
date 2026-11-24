@@ -12,6 +12,9 @@ How one question is answered (the three course techniques together):
      the last call is sent without the function list, so it must write the answer.
   4. Checks: the citations in the answer are matched with the passages and results the model received,
      and a refusal is detected from the fixed opening sentence (F7).
+Backup model (app only): if the main model is still busy after the retries, the app may pass a
+`fallback_model`; the question is then answered again from the start by that model, and the answer
+says so (`fallback_from`). Evaluation runs pass no fallback, so every scored answer comes from the main model.
 Everything about the question (answer, citations, passages, function calls, tokens, time) is returned
 in an Answer, which the app shows and the query log saves (F10).
 """
@@ -27,7 +30,7 @@ from google.genai import types
 
 from app.config import Settings, cost_usd
 from app.documents import DOC_INFO
-from app.gemini import Gemini, Usage, failure_tag
+from app.gemini import Gemini, Usage, failure_tag, is_busy
 from app.retrieval import Index, question_input
 
 REFUSAL = "This is not available in the sources."
@@ -81,7 +84,8 @@ class Answer:
     usage: Usage = field(default_factory=Usage)
     latency_s: float = 0.0                   # question sent -> answer ready (wall clock)
     error: str | None = None
-    model: str = ""
+    model: str = ""                          # the model that wrote this answer
+    fallback_from: str = ""                  # the main model, if it was busy and the backup model answered
     version: str = ""
     settings: dict = field(default_factory=dict)
     timestamp: str = ""
@@ -100,14 +104,16 @@ class Answer:
 
     def cost(self) -> float:
         u = self.usage
-        return cost_usd(u.input_tokens, u.output_tokens, u.embed_tokens)
+        # A backup answer is priced as the backup model (tokens of a first, failed try included).
+        return cost_usd(u.input_tokens, u.output_tokens, u.embed_tokens, self.model)
 
     def log_record(self, session_id: str = "", run: str = "app") -> dict:
         """One row of the structured query log (F10)."""
         u = self.usage
         return {
             "timestamp": self.timestamp, "run": run, "session_id": session_id,
-            "version": self.version, "model": self.model, "settings": self.settings,
+            "version": self.version, "model": self.model, "fallback_from": self.fallback_from,
+            "settings": self.settings,
             "question": self.question, "answer": self.text, "refused": self.refused,
             "says_not_available": self.says_not_available, "follow_up": self.follow_up,
             "citations": [{"id": c, "title": self._title(c)} for c in self.cited],
@@ -184,24 +190,54 @@ def response_text(response) -> str:
 
 # ---------------------------------------------------------------------------- the assistant
 class Assistant:
-    def __init__(self, gemini: Gemini, settings: Settings, tools=None, index: Index | None = None):
+    def __init__(self, gemini: Gemini, settings: Settings, tools=None, index: Index | None = None,
+                 fallback_model: str | None = None):
         self.gemini = gemini
         self.settings = settings
         self.tools = tools          # app.data_tools.DataTools, or None (documents only)
         self.index = index          # app.retrieval.Index, or None (data only)
+        self.fallback_model = fallback_model    # app only; evaluation runs leave it None
+
+    def _new_answer(self, question: str) -> Answer:
+        s = self.settings
+        return Answer(question=question, model=getattr(self.gemini, "model", s.model), version=s.version,
+                      settings=s.as_dict(), timestamp=datetime.now().isoformat(timespec="seconds"))
+
+    def _can_fall_back(self, err: Exception) -> bool:
+        """Only when the main model itself stayed busy (not the embedding service), and a backup is set."""
+        return (bool(self.fallback_model) and self.fallback_model != getattr(self.gemini, "model", None)
+                and is_busy(err) and getattr(err, "stage", "") == "generation")
 
     def ask(self, question: str, history: list[Answer] | None = None) -> Answer:
         history = [h for h in (history or []) if not h.error]
-        s = self.settings
-        ans = Answer(question=question, model=s.model, version=s.version, settings=s.as_dict(),
-                     timestamp=datetime.now().isoformat(timespec="seconds"))
+        ans = self._new_answer(question)
         start = time.perf_counter()
         try:
             self._answer(ans, history)
         except Exception as err:            # a failed request is recorded plainly, never shown as an answer
+            if self._can_fall_back(err):
+                ans = self._fall_back(question, history, ans)
+            else:
+                ans.error = f"{failure_tag(err)}: {err}"
+                ans.text = ""
+        ans.latency_s = time.perf_counter() - start
+        return ans
+
+    def _fall_back(self, question: str, history: list[Answer], failed: Answer) -> Answer:
+        """Answer the question again from the start with the backup model (the main model stayed busy)."""
+        main = self.gemini.model
+        self.gemini.model = self.fallback_model
+        notify = getattr(self.gemini, "notify", None)
+        if notify:
+            notify(f"{main} is still busy, so the backup model {self.fallback_model} is answering.")
+        ans = self._new_answer(question)
+        ans.fallback_from = main
+        ans.usage = failed.usage            # tokens and waits of the first try still count
+        try:
+            self._answer(ans, history)
+        except Exception as err:
             ans.error = f"{failure_tag(err)}: {err}"
             ans.text = ""
-        ans.latency_s = time.perf_counter() - start
         return ans
 
     def _answer(self, ans: Answer, history: list[Answer]) -> None:

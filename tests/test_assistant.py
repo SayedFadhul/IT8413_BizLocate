@@ -2,7 +2,7 @@
 refusal detection, follow-ups and the query-log record. No test-set question is used."""
 import numpy as np
 import pytest
-from google.genai import types
+from google.genai import errors, types
 
 from app.assistant import REFUSAL, Assistant, is_follow_up, parse_citations
 from app.config import get_settings
@@ -132,6 +132,43 @@ def test_failed_request_is_recorded_not_answered(tools, index):
             raise RuntimeError("network down")
     a = Assistant(Broken([]), get_settings("v1"), tools=tools, index=index).ask("Anything?")
     assert a.error and "network down" in a.error and a.text == ""
+
+
+class BusyThenFine(FakeGemini):
+    """The main model stays busy (503); the backup model answers."""
+
+    def __init__(self, responses, main):
+        super().__init__(responses)
+        self.model, self.notes = main, []
+
+    def notify(self, message):
+        self.notes.append(message)
+
+    def generate(self, contents, usage, system_instruction=None, tools=None, tool_mode=None):
+        if self.model.endswith("main"):
+            err = errors.APIError(503, {"error": {"code": 503, "message": "busy", "status": "UNAVAILABLE"}})
+            err.stage = "generation"
+            raise err
+        return super().generate(contents, usage, system_instruction, tools, tool_mode)
+
+
+def test_backup_model_answers_when_the_main_model_stays_busy(tools, index):
+    fake = BusyThenFine([text_response("A licence is needed [P1].")], main="model-main")
+    a = Assistant(fake, get_settings("v1"), tools=tools, index=index, fallback_model="model-backup").ask("Licence?")
+    assert a.error is None and a.text.startswith("A licence")
+    assert a.model == "model-backup" and a.fallback_from == "model-main"
+    assert a.cited == ["P1"] and a.unknown_citations == []
+    assert a.usage.embedding_calls == 2                      # the first try still counts
+    assert "backup model model-backup" in fake.notes[0]
+    rec = a.log_record()
+    assert rec["model"] == "model-backup" and rec["fallback_from"] == "model-main"
+
+
+def test_no_backup_model_in_evaluation_runs(tools, index):
+    fake = BusyThenFine([text_response("never used")], main="model-main")
+    a = Assistant(fake, get_settings("v1"), tools=tools, index=index).ask("Licence?")   # as run_eval.py does
+    assert a.error and "SERVER BUSY (503)" in a.error and a.text == ""
+    assert a.model == "model-main" and a.fallback_from == ""
 
 
 def test_log_record_has_the_fields_the_brief_asks_for(tools, index):

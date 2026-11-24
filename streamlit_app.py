@@ -64,7 +64,9 @@ with st.sidebar:
     settings = get_settings(version)
     with st.expander("Settings in use", expanded=False, icon=":material/tune:"):
         st.markdown(
-            f"**Model:** `{settings.model}`  \n**Embeddings:** `{settings.embedding_model}`  \n"
+            f"**Model:** `{settings.model}`  \n"
+            f"**Backup model (only if busy, not in evaluation runs):** `{settings.fallback_model}`  \n"
+            f"**Embeddings:** `{settings.embedding_model}`  \n"
             f"**Temperature:** {settings.temperature} · **Thinking:** {settings.thinking_level}  \n"
             f"**Max output tokens:** {settings.max_output_tokens}  \n"
             f"**Passages per question (k):** {settings.top_k} · **Chunk size:** {settings.chunk_words} words  \n"

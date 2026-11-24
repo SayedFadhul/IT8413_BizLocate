@@ -55,6 +55,8 @@ The documents and their search index come with the code (in `documents/`), so th
 
 All settings are in `app/config.py` and shown in the sidebar.
 
+**When Google is busy** (error 503) or a limit is reached (429), the app tries again after 5 and 15 seconds and shows the wait on screen. If the main model is still busy, the backup model (`gemini-3.5-flash-lite`, also free) answers, the answer says so, and the query log records it (`fallback_from`). Evaluation runs never use the backup: they wait 30 and 60 seconds and record a failure if the model is still busy, so every scored answer comes from `gemini-3.1-flash-lite`.
+
 ## Evaluation
 
 ```
